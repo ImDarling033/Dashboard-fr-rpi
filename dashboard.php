@@ -50,7 +50,7 @@ $loadAverage = getLoadAverage();
                         <div class="card text-white bg-primary mb-3">
                             <div class="card-body">
                                 <h5 class="card-title"><i class="bi bi-cpu"></i> CPU</h5>
-                                <div class="progress" style="box-shadow:0px 0px 22px 1px #0000008C">
+                                <div class="progress">
                                     <div class="progress-bar" role="progressbar" style="width: <?php echo $stats['cpu']; ?>%;" 
                                          aria-valuenow="<?php echo $stats['cpu']; ?>" aria-valuemin="0" aria-valuemax="100">
                                         <?php echo $stats['cpu']; ?>%
@@ -64,7 +64,7 @@ $loadAverage = getLoadAverage();
                         <div class="card text-white bg-success mb-3">
                             <div class="card-body">
                                 <h5 class="card-title"><i class="bi bi-memory"></i> RAM</h5>
-                                <div class="progress" style="box-shadow:0px 0px 22px 1px #0000008C">
+                                <div class="progress">
                                     <div class="progress-bar bg-success" role="progressbar" style="width: <?php echo $stats['memory']; ?>%;" 
                                          aria-valuenow="<?php echo $stats['memory']; ?>" aria-valuemin="0" aria-valuemax="100">
                                         <?php echo $stats['memory']; ?>%
@@ -78,7 +78,7 @@ $loadAverage = getLoadAverage();
                         <div class="card text-white bg-info mb-3">
                             <div class="card-body">
                                 <h5 class="card-title"><i class="bi bi-hdd"></i> Stockage</h5>
-                                <div class="progress" style="box-shadow:0px 0px 22px 1px #0000008C">
+                                <div class="progress">
                                     <div class="progress-bar bg-info" role="progressbar" style="width: <?php echo $stats['disk']; ?>%;" 
                                          aria-valuenow="<?php echo $stats['disk']; ?>" aria-valuemin="0" aria-valuemax="100">
                                         <?php echo $stats['disk']; ?>%
@@ -92,7 +92,7 @@ $loadAverage = getLoadAverage();
                         <div class="card text-white bg-warning mb-3">
                             <div class="card-body">
                                 <h5 class="card-title"><i class="bi bi-thermometer-half"></i> Température</h5>
-                                <div class="progress" style="box-shadow:0px 0px 22px 1px #0000008C">
+                                <div class="progress">
                                     <div class="progress-bar bg-warning" role="progressbar" style="width: <?php echo min(100, $stats['temp'] * 2); ?>%;" 
                                          aria-valuenow="<?php echo $stats['temp']; ?>" aria-valuemin="0" aria-valuemax="100">
                                         <?php echo $stats['temp']; ?>°C

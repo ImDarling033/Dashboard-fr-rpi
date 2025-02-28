@@ -153,10 +153,5 @@ function uploadFile() {
     $targetFile = $targetDir . basename($_FILES['fileToUpload']['name']);
     
     // Déplacer le fichier téléversé
-    if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $targetFile)) {
-        echo json_encode(['success' => true, 'message' => 'Fichier téléversé avec succès']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Erreur lors du déplacement du fichier']);
-    }
-}
+    if (move_uploade
 

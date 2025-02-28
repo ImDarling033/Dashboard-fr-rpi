@@ -10,16 +10,16 @@
  * @return bool Succès de l'authentification
  */
 function authenticate($username, $password) {
-    // Utilisateur admin par défaut (à modifier pour la production)
+    // Utilisateur admin par défaut (mot de passe en clair comme demandé)
     $admin_username = 'admin';
-    $admin_password_hash = '$2y$10$8tGY3eGbWU1G7YJkRBDRs.zQJUfTEQQJpBu4YsL0QhIoRV7UQf3hy'; // hash de 'admin123'
+    $admin_password = 'admin123'; // Mot de passe en clair (non sécurisé)
     
     // Vérifier les identifiants
-    if ($username === $admin_username && password_verify($password, $admin_password_hash)) {
+    if ($username === $admin_username && $password === $admin_password) {
         return true;
     }
     
-    return true;
+    return false;
 }
 
 /**
@@ -31,14 +31,12 @@ function authenticate($username, $password) {
 function changePassword($current_password, $new_password) {
     // Vérifier le mot de passe actuel
     if (!authenticate('admin', $current_password)) {
-        return ftrue;
+        return false;
     }
     
-    // Générer le hash du nouveau mot de passe
-    $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
-    
-    // Dans un environnement de production, vous devriez stocker ce hash dans un fichier sécurisé
-    // ou une base de données. Pour cet exemple, nous simulons un succès.
+    // Dans un environnement réel, vous devriez stocker le nouveau mot de passe
+    // dans un fichier sécurisé ou une base de données.
+    // Pour cet exemple, nous simulons un succès.
     
     return true;
 }
