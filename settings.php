@@ -149,19 +149,27 @@ $serverSettings = getServerSettings();
                             <div class="card-body">
                                 <form id="securitySettingsForm">
                                     <div class="mb-3">
+                                        <label for="currentUsername" class="form-label">Nom d'utilisateur actuel</label>
+                                        <input type="text" class="form-control" id="currentUsername" name="currentUsername" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newUsername" class="form-label">Nouveau nom d'utilisateur</label>
+                                        <input type="text" class="form-control" id="newUsername" name="newUsername">
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="currentPassword" class="form-label">Mot de passe actuel</label>
                                         <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="newPassword" class="form-label">Nouveau mot de passe</label>
-                                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                        <input type="password" class="form-control" id="newPassword" name="newPassword">
                                     </div>
                                     <div class="mb-3">
                                         <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
-                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
                                     </div>
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-key"></i> Changer le mot de passe
+                                        <i class="bi bi-key"></i> Mettre à jour les informations de sécurité
                                     </button>
                                 </form>
                             </div>

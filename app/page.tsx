@@ -1,6 +1,6 @@
 "use client"
 
-import  from "../js/terminal"
+import  from "../js/network"
 
 export default function SyntheticV0PageForDeployment() {
   return < />

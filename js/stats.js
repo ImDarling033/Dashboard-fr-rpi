@@ -1,194 +1,147 @@
 import { Chart } from "@/components/ui/chart"
-/**
- * Script pour les statistiques du serveur
- */
-
-// Variables pour les graphiques
 let systemActivityChart
-const cpuData = []
-const memoryData = []
-const diskData = []
-const labels = []
+const maxDataPoints = 20
+const initialData = {
+  labels: [],
+  datasets: [
+    {
+      label: "CPU",
+      data: [],
+      borderColor: "rgba(255, 99, 132, 1)",
+      backgroundColor: "rgba(255, 99, 132, 0.2)",
+      fill: true,
+    },
+    {
+      label: "RAM",
+      data: [],
+      borderColor: "rgba(54, 162, 235, 1)",
+      backgroundColor: "rgba(54, 162, 235, 0.2)",
+      fill: true,
+    },
+    {
+      label: "Stockage",
+      data: [],
+      borderColor: "rgba(255, 206, 86, 1)",
+      backgroundColor: "rgba(255, 206, 86, 0.2)",
+      fill: true,
+    },
+    {
+      label: "Température",
+      data: [],
+      borderColor: "rgba(75, 192, 192, 1)",
+      backgroundColor: "rgba(75, 192, 192, 0.2)",
+      fill: true,
+    },
+  ],
+}
 
-// Initialiser le graphique d'activité système
 function initSystemActivityChart() {
-  const ctx = document.getElementById("systemActivityChart")
-  if (!ctx) return
-
-  // Initialiser les données
-  for (let i = 0; i < 10; i++) {
-    labels.push("")
-    cpuData.push(0)
-    memoryData.push(0)
-    diskData.push(0)
-  }
-
+  const ctx = document.getElementById("systemActivityChart").getContext("2d")
   systemActivityChart = new Chart(ctx, {
     type: "line",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "CPU",
-          data: cpuData,
-          borderColor: "#0d6efd",
-          backgroundColor: "rgba(13, 110, 253, 0.1)",
-          tension: 0.4,
-          fill: true,
-        },
-        {
-          label: "RAM",
-          data: memoryData,
-          borderColor: "#198754",
-          backgroundColor: "rgba(25, 135, 84, 0.1)",
-          tension: 0.4,
-          fill: true,
-        },
-        {
-          label: "Disque",
-          data: diskData,
-          borderColor: "#0dcaf0",
-          backgroundColor: "rgba(13, 202, 240, 0.1)",
-          tension: 0.4,
-          fill: true,
-        },
-      ],
-    },
+    data: initialData,
     options: {
       responsive: true,
-      maintainAspectRatio: false,
       scales: {
+        x: {
+          type: "time",
+          time: {
+            unit: "second",
+          },
+        },
         y: {
           beginAtZero: true,
           max: 100,
-          title: {
-            display: true,
-            text: "Utilisation (%)",
-          },
         },
       },
-      plugins: {
-        legend: {
-          position: "top",
-        },
-        tooltip: {
-          mode: "index",
-          intersect: false,
-        },
+      animation: {
+        duration: 0,
       },
     },
   })
 }
 
-// Déclarer la variable updateSidebarStats (ou importer si nécessaire)
-function updateSidebarStats() {
-  // Ajoutez ici le code pour mettre à jour les statistiques de la barre latérale
-  // ou importez la fonction si elle est définie dans un autre fichier.
-  console.log("Fonction updateSidebarStats appelée")
-}
-
-// Mettre à jour les statistiques
 function updateStats() {
   fetch("api/get-stats.php")
     .then((response) => response.json())
     .then((data) => {
-      // Mettre à jour les cartes
-      updateStatCards(data)
+      // Mettre à jour les valeurs affichées
+      document.querySelector(".progress-bar[aria-valuenow=\"<?php echo $stats['cpu']; ?>\"]").style.width =
+        data.stats.cpu + "%"
+      document.querySelector(".progress-bar[aria-valuenow=\"<?php echo $stats['cpu']; ?>\"]").textContent =
+        data.stats.cpu + "%"
+      document.querySelector(".progress-bar[aria-valuenow=\"<?php echo $stats['memory']; ?>\"]").style.width =
+        data.stats.memory + "%"
+      document.querySelector(".progress-bar[aria-valuenow=\"<?php echo $stats['memory']; ?>\"]").textContent =
+        data.stats.memory + "%"
+      document.querySelector(".progress-bar[aria-valuenow=\"<?php echo $stats['disk']; ?>\"]").style.width =
+        data.stats.disk + "%"
+      document.querySelector(".progress-bar[aria-valuenow=\"<?php echo $stats['disk']; ?>\"]").textContent =
+        data.stats.disk + "%"
+      document.querySelector(".progress-bar[aria-valuenow=\"<?php echo $stats['temp']; ?>\"]").style.width =
+        Math.min(100, data.stats.temp * 2) + "%"
+      document.querySelector(".progress-bar[aria-valuenow=\"<?php echo $stats['temp']; ?>\"]").textContent =
+        data.stats.temp + "°C"
 
       // Mettre à jour le graphique
-      updateSystemActivityChart(data)
+      const timestamp = new Date()
+      systemActivityChart.data.labels.push(timestamp)
+      systemActivityChart.data.datasets[0].data.push(data.stats.cpu)
+      systemActivityChart.data.datasets[1].data.push(data.stats.memory)
+      systemActivityChart.data.datasets[2].data.push(data.stats.disk)
+      systemActivityChart.data.datasets[3].data.push(data.stats.temp)
 
-      // Mettre à jour les statistiques de la barre latérale
-      updateSidebarStats()
+      // Limiter le nombre de points de données
+      if (systemActivityChart.data.labels.length > maxDataPoints) {
+        systemActivityChart.data.labels.shift()
+        systemActivityChart.data.datasets.forEach((dataset) => dataset.data.shift())
+      }
+
+      systemActivityChart.update()
+
+      // Mettre à jour les autres informations
+      document.querySelector('.card-text:contains("Charge:")').textContent = "Charge: " + data.loadAverage
+      document.querySelector('.card-text:contains("Uptime:")').textContent = "Uptime: " + data.uptime
+      document.querySelector('.badge:contains("' + data.ipv4 + '")').textContent = data.ipv4
+      document.querySelector('.badge:contains("' + data.ipv6 + '")').textContent = data.ipv6
+      document.querySelector('.badge:contains("' + data.connectedUsers + '")').textContent = data.connectedUsers
     })
     .catch((error) => console.error("Erreur lors de la récupération des statistiques:", error))
 }
 
-// Mettre à jour les cartes de statistiques
-function updateStatCards(data) {
-  // CPU
-  const cpuProgress = document.querySelector('.card-title:contains("CPU") + .progress .progress-bar')
-  const cpuText = document.querySelector('.card-title:contains("CPU") + .progress .progress-bar')
-  const cpuLoad = document.querySelector('.card-title:contains("CPU") + .progress + .card-text')
+function executeQuickCommand() {
+  const command = document.getElementById("quickCommand").value
+  const output = document.getElementById("quickTerminalOutput")
 
-  if (cpuProgress) cpuProgress.style.width = data.stats.cpu + "%"
-  if (cpuText) cpuText.textContent = data.stats.cpu + "%"
-  if (cpuLoad) cpuLoad.textContent = "Charge: " + data.loadAverage
-
-  // RAM
-  const ramProgress = document.querySelector('.card-title:contains("RAM") + .progress .progress-bar')
-  const ramText = document.querySelector('.card-title:contains("RAM") + .progress .progress-bar')
-  const ramUsage = document.querySelector('.card-title:contains("RAM") + .progress + .card-text')
-
-  if (ramProgress) ramProgress.style.width = data.stats.memory + "%"
-  if (ramText) ramText.textContent = data.stats.memory + "%"
-  if (ramUsage) ramUsage.textContent = data.stats.memory_used + " / " + data.stats.memory_total
-
-  // Stockage
-  const diskProgress = document.querySelector('.card-title:contains("Stockage") + .progress .progress-bar')
-  const diskText = document.querySelector('.card-title:contains("Stockage") + .progress .progress-bar')
-  const diskUsage = document.querySelector('.card-title:contains("Stockage") + .progress + .card-text')
-
-  if (diskProgress) diskProgress.style.width = data.stats.disk + "%"
-  if (diskText) diskText.textContent = data.stats.disk + "%"
-  if (diskUsage) diskUsage.textContent = data.diskUsage
-
-  // Température
-  const tempProgress = document.querySelector('.card-title:contains("Température") + .progress .progress-bar')
-  const tempText = document.querySelector('.card-title:contains("Température") + .progress .progress-bar')
-  const uptime = document.querySelector('.card-title:contains("Température") + .progress + .card-text')
-
-  if (tempProgress) tempProgress.style.width = Math.min(100, data.stats.temp * 2) + "%"
-  if (tempText) tempText.textContent = data.stats.temp + "°C"
-  if (uptime) uptime.textContent = "Uptime: " + data.uptime
-
-  // Informations réseau
-  const ipv4 = document.querySelector('.list-group-item:contains("IPv4") .badge')
-  const ipv6 = document.querySelector('.list-group-item:contains("IPv6") .badge')
-  const connectedUsers = document.querySelector('.list-group-item:contains("Utilisateurs connectés") .badge')
-
-  if (ipv4) ipv4.textContent = data.ipv4
-  if (ipv6) ipv6.textContent = data.ipv6
-  if (connectedUsers) connectedUsers.textContent = data.connectedUsers
+  fetch("api/execute-command.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ command: command }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      const newLine = document.createElement("div")
+      newLine.className = "terminal-line"
+      newLine.textContent = `${command}\n${data.output}`
+      output.appendChild(newLine)
+      output.scrollTop = output.scrollHeight
+      document.getElementById("quickCommand").value = ""
+    })
+    .catch((error) => {
+      console.error("Erreur lors de l'exécution de la commande:", error)
+      const errorLine = document.createElement("div")
+      errorLine.className = "terminal-line text-danger"
+      errorLine.textContent = "Erreur lors de l'exécution de la commande"
+      output.appendChild(errorLine)
+    })
 }
 
-// Mettre à jour le graphique d'activité système
-function updateSystemActivityChart(data) {
-  if (!systemActivityChart) return
-
-  // Ajouter les nouvelles données
-  const now = new Date()
-  const timeString =
-    now.getHours() +
-    ":" +
-    (now.getMinutes() < 10 ? "0" : "") +
-    now.getMinutes() +
-    ":" +
-    (now.getSeconds() < 10 ? "0" : "") +
-    now.getSeconds()
-
-  labels.push(timeString)
-  cpuData.push(data.stats.cpu)
-  memoryData.push(data.stats.memory)
-  diskData.push(data.stats.disk)
-
-  // Supprimer les anciennes données
-  if (labels.length > 10) {
-    labels.shift()
-    cpuData.shift()
-    memoryData.shift()
-    diskData.shift()
-  }
-
-  // Mettre à jour le graphique
-  systemActivityChart.update()
-}
-
-// Déclarer la variable jQuery (ou importer si nécessaire)
-if (typeof jQuery === "undefined") {
-  console.error("jQuery is not defined. Please include jQuery in your project.")
-} else {
-  // Fonction pour sélectionner des éléments avec du texte spécifique
-  jQuery.expr[":"].contains = (a, i, m) => jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0
-}
+// Initialiser le graphique et commencer l'actualisation automatique
+document.addEventListener("DOMContentLoaded", () => {
+  initSystemActivityChart()
+  updateStats()
+  setInterval(updateStats, 10000)
+})
 

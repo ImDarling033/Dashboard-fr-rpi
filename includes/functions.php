@@ -667,3 +667,45 @@ function getTimeZones() {
     ];
 }
 
+function updateUsername($currentUsername, $newUsername) {
+    // Dans un environnement de production, vous devriez mettre à jour le nom d'utilisateur dans une base de données
+    // Pour cet exemple, nous simulons un succès
+    return true;
+}
+
+function updatePassword($username, $newPassword) {
+    // Dans un environnement de production, vous devriez hacher le mot de passe et le mettre à jour dans une base de données
+    // Pour cet exemple, nous simulons un succès
+    return true;
+}
+
+function updateServerSettings($serverName, $timeZone, $maxUploadSize, $maxExecutionTime, $memoryLimit) {
+    // Dans un environnement de production, vous devriez mettre à jour ces paramètres dans un fichier de configuration ou une base de données
+    // Pour cet exemple, nous simulons un succès
+    return true;
+}
+
+function updateUISettings($settings) {
+    // Dans un environnement de production, vous devriez sauvegarder ces paramètres dans un fichier de configuration ou une base de données
+    // Pour cet exemple, nous simulons un succès et sauvegardons les paramètres dans la session
+    $_SESSION['ui_settings'] = $settings;
+    return true;
+}
+
+// Fonction pour récupérer les paramètres de l'interface utilisateur
+function getUISettings() {
+    // Si les paramètres sont stockés dans la session, les retourner
+    if (isset($_SESSION['ui_settings'])) {
+        return $_SESSION['ui_settings'];
+    }
+    
+    // Sinon, retourner les paramètres par défaut
+    return [
+        'theme' => 'light',
+        'primaryColor' => '#0d6efd',
+        'fontSize' => 'medium',
+        'sidebarPosition' => 'left',
+        'compactMode' => false
+    ];
+}
+

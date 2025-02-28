@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (securitySettingsForm) {
     securitySettingsForm.addEventListener("submit", (e) => {
       e.preventDefault()
-      changePassword()
+      updateSecuritySettings()
     })
   }
 
@@ -108,7 +108,48 @@ function loadSettings() {
   applyCompactMode(compactMode)
 }
 
-// Sauvegarder les paramètres du serveur
+function updateSecuritySettings() {
+  const currentUsername = document.getElementById("currentUsername").value
+  const newUsername = document.getElementById("newUsername").value
+  const currentPassword = document.getElementById("currentPassword").value
+  const newPassword = document.getElementById("newPassword").value
+  const confirmPassword = document.getElementById("confirmPassword").value
+
+  if (newPassword !== confirmPassword) {
+    showNotification("Les nouveaux mots de passe ne correspondent pas", "danger")
+    return
+  }
+
+  const formData = new FormData()
+  formData.append("action", "update_security_settings")
+  formData.append("currentUsername", currentUsername)
+  formData.append("newUsername", newUsername)
+  formData.append("currentPassword", currentPassword)
+  formData.append("newPassword", newPassword)
+
+  fetch("api/update-settings.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        showNotification("Informations de sécurité mises à jour avec succès", "success")
+        document.getElementById("currentUsername").value = ""
+        document.getElementById("newUsername").value = ""
+        document.getElementById("currentPassword").value = ""
+        document.getElementById("newPassword").value = ""
+        document.getElementById("confirmPassword").value = ""
+      } else {
+        showNotification(data.message, "danger")
+      }
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la mise à jour des informations de sécurité:", error)
+      showNotification("Une erreur est survenue lors de la mise à jour des informations de sécurité", "danger")
+    })
+}
+
 function saveServerSettings() {
   const serverName = document.getElementById("serverName").value
   const timeZone = document.getElementById("timeZone").value
@@ -116,7 +157,6 @@ function saveServerSettings() {
   const maxExecutionTime = document.getElementById("maxExecutionTime").value
   const memoryLimit = document.getElementById("memoryLimit").value
 
-  // Créer le formulaire de données
   const formData = new FormData()
   formData.append("action", "save_server_settings")
   formData.append("serverName", serverName)
@@ -125,13 +165,24 @@ function saveServerSettings() {
   formData.append("maxExecutionTime", maxExecutionTime)
   formData.append("memoryLimit", memoryLimit)
 
-  // Simuler une sauvegarde réussie (dans un environnement réel, vous enverriez ces données à une API)
-  setTimeout(() => {
-    showNotification("Paramètres du serveur enregistrés avec succès", "success")
-  }, 500)
+  fetch("api/update-settings.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        showNotification("Paramètres du serveur enregistrés avec succès", "success")
+      } else {
+        showNotification(data.message, "danger")
+      }
+    })
+    .catch((error) => {
+      console.error("Erreur lors de l'enregistrement des paramètres du serveur:", error)
+      showNotification("Une erreur est survenue lors de l'enregistrement des paramètres du serveur", "danger")
+    })
 }
 
-// Sauvegarder les paramètres d'interface
 function saveUISettings() {
   const theme = document.querySelector('input[name="theme"]:checked').value
   const primaryColor = document.getElementById("primaryColor").value
@@ -139,21 +190,39 @@ function saveUISettings() {
   const sidebarPosition = document.getElementById("sidebarPosition").value
   const compactMode = document.getElementById("compactMode").checked
 
-  // Sauvegarder dans localStorage
-  localStorage.setItem("theme", theme)
-  localStorage.setItem("primaryColor", primaryColor)
-  localStorage.setItem("fontSize", fontSize)
-  localStorage.setItem("sidebarPosition", sidebarPosition)
-  localStorage.setItem("compactMode", compactMode.toString())
+  const formData = new FormData()
+  formData.append("action", "save_ui_settings")
+  formData.append("theme", theme)
+  formData.append("primaryColor", primaryColor)
+  formData.append("fontSize", fontSize)
+  formData.append("sidebarPosition", sidebarPosition)
+  formData.append("compactMode", compactMode)
 
-  // Appliquer les styles
-  applyTheme(theme)
-  applyPrimaryColor(primaryColor)
-  applyFontSize(fontSize)
-  applySidebarPosition(sidebarPosition)
-  applyCompactMode(compactMode)
+  fetch("api/update-settings.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        showNotification("Paramètres d'interface enregistrés avec succès", "success")
+        applyUISettings(data.settings)
+      } else {
+        showNotification(data.message, "danger")
+      }
+    })
+    .catch((error) => {
+      console.error("Erreur lors de l'enregistrement des paramètres d'interface:", error)
+      showNotification("Une erreur est survenue lors de l'enregistrement des paramètres d'interface", "danger")
+    })
+}
 
-  showNotification("Paramètres d'interface appliqués avec succès", "success")
+function applyUISettings(settings) {
+  document.documentElement.setAttribute("data-theme", settings.theme)
+  document.documentElement.style.setProperty("--primary-color", settings.primaryColor)
+  document.documentElement.style.setProperty("--font-size", settings.fontSize)
+  document.body.classList.toggle("sidebar-right", settings.sidebarPosition === "right")
+  document.body.classList.toggle("compact-mode", settings.compactMode)
 }
 
 // Réinitialiser les paramètres d'interface
@@ -187,33 +256,6 @@ function resetUISettings() {
   applyCompactMode(defaultCompactMode)
 
   showNotification("Paramètres d'interface réinitialisés", "info")
-}
-
-// Changer le mot de passe
-function changePassword() {
-  const currentPassword = document.getElementById("currentPassword").value
-  const newPassword = document.getElementById("newPassword").value
-  const confirmPassword = document.getElementById("confirmPassword").value
-
-  // Vérifier que les mots de passe correspondent
-  if (newPassword !== confirmPassword) {
-    showNotification("Les mots de passe ne correspondent pas", "danger")
-    return
-  }
-
-  // Créer le formulaire de données
-  const formData = new FormData()
-  formData.append("action", "change_password")
-  formData.append("currentPassword", currentPassword)
-  formData.append("newPassword", newPassword)
-
-  // Simuler un changement réussi (dans un environnement réel, vous enverriez ces données à une API)
-  setTimeout(() => {
-    showNotification("Mot de passe changé avec succès", "success")
-    document.getElementById("currentPassword").value = ""
-    document.getElementById("newPassword").value = ""
-    document.getElementById("confirmPassword").value = ""
-  }, 500)
 }
 
 // Appliquer le thème
