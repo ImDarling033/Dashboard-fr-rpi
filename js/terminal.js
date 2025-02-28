@@ -5,7 +5,7 @@
 // Variables globales
 const commandHistory = []
 let historyIndex = -1
-const currentDirectory = "~"
+let currentDirectory = "~"
 
 // Initialiser le terminal
 document.addEventListener("DOMContentLoaded", () => {
@@ -56,6 +56,69 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 })
+
+// Déclarations des fonctions manquantes (simulations)
+function showSystemInfo() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "System Info: (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showNetworkInfo() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Network Info: (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showDirectoryListing() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Directory Listing: (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showCurrentDirectory() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Current Directory: " + currentDirectory
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function changeDirectory(path) {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  if (path === "..") {
+    // Simulate going up one level (very basic)
+    if (currentDirectory !== "~") {
+      currentDirectory = "~" // Simplified
+    }
+  } else if (path === "~") {
+    currentDirectory = "~"
+  } else {
+    currentDirectory = "~/" + path // Simplified
+  }
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Changed directory to: " + currentDirectory
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
 
 // Traiter une commande
 function processCommand() {
@@ -370,15 +433,181 @@ function downloadTerminalOutput() {
 
 // Afficher l'aide
 function showHelp() {
-    const terminalOutput = document.getElementById('terminalOutput');
-    if (!terminalOutput) return;
-    
-    const helpText = `
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const helpText = `
 Commandes disponibles:
   help                  Affiche cette aide
   clear                 Efface le terminal
   ls, dir               Liste les fichiers et dossiers
   cat [fichier]         Affiche le contenu d'un fichier
   cd [dossier]          Change de répertoire
-  pwd
+  pwd                   Affiche le répertoire courant
+  sysinfo               Affiche les informations système
+  netinfo               Affiche les informations réseau
+`
+
+  const helpLines = helpText.split("\n")
+
+  helpLines.forEach((line) => {
+    const outputLine = document.createElement("div")
+    outputLine.className = "terminal-line"
+    outputLine.textContent = line
+    terminalOutput.appendChild(outputLine)
+  })
+
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showDate() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const now = new Date()
+  const dateString = now.toLocaleDateString()
+  const timeString = now.toLocaleTimeString()
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = `Date: ${dateString}, Time: ${timeString}`
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showWhoAmI() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "User: root" // Simulated
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showHostname() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const hostname = document.querySelector(".terminal-title")
+    ? document.querySelector(".terminal-title").textContent.split(" - ")[1]
+    : "localhost"
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = `Hostname: ${hostname}`
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showUname() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Linux (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showDiskUsage() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Disk Usage: (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showMemoryUsage() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Memory Usage: (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showProcesses() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Processes: (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showNetworkInterfaces() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Network Interfaces: (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showNetworkConnections() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Network Connections: (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function pingHost(host) {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = `Pinging ${host}: (Simulated)`
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showFileContent(filename) {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = `Content of ${filename}: (Simulated)`
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showUptime() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Uptime: (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
+
+function showConnectedUsers() {
+  const terminalOutput = document.getElementById("terminalOutput")
+  if (!terminalOutput) return
+
+  const outputLine = document.createElement("div")
+  outputLine.className = "terminal-line"
+  outputLine.textContent = "Connected Users: (Simulated)"
+  terminalOutput.appendChild(outputLine)
+  terminalOutput.scrollTop = terminalOutput.scrollHeight
+}
 
